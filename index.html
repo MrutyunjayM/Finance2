@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Passbook</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>📖 Finance Passbook</h1>
+    </header>
+
+    <!-- Transaction Lookup Form -->
+    <section id="lookupSection">
+        <form id="userForm">
+            <label for="name">Enter Name:</label>
+            <input type="text" id="name" name="name" required placeholder="John Doe">
+
+            <label for="accountNumber">Enter Account Number:</label>
+            <input type="number" id="accountNumber" name="accountNumber" required placeholder="123456">
+
+            <button type="submit">🔍 Fetch Transactions</button>
+        </form>
+    </section>
+
+    <!-- Transaction Table -->
+    <section id="transactionSection" class="hidden">
+        <h2>📑 Transaction History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody id="transactionBody">
+                <tr>
+                    <td colspan="4">No transactions found.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Print Button -->
+        <button id="printBtn">🖨️ Print Passbook</button>
+    </section>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
