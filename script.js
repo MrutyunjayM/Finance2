@@ -1,3 +1,56 @@
+// Import Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+// 🔥 Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCuSKstc9p_nhqLrqZKY_VHsr8pISLlKTY",
+    authDomain: "financeportal-63336.firebaseapp.com",
+    projectId: "financeportal-63336",
+    storageBucket: "financeportal-63336.firebasestorage.app",
+    messagingSenderId: "503084246152",
+    appId: "1:503084246152:web:1c254a1d032e15655aab3d"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Event listener for form submission
+document.getElementById("userForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    // Get user input values (trimmed for safety)
+    const name = document.getElementById("name").value.trim();
+    const accountNumber = document.getElementById("accountNumber").value.trim();
+
+    console.log("🔍 Fetching transactions for:", name, accountNumber);
+
+    try {
+        // 🔥 Firestore Query (Corrected Field Names)
+        const q = query(collection(db, "transactions"), 
+                        where("Name", "==", name),  
+                        where("AccountNumber", "==", accountNumber));
+
+        const querySnapshot = await getDocs(q);
+
+        console.log(`✅ Found ${querySnapshot.size} transactions.`);
+
+        let transactions = [];
+        querySnapshot.forEach(doc => {
+            console.log("📄 Transaction Data:", doc.data());
+            transactions.push(doc.data());
+        });
+
+        // Display transactions in passbook format
+        displayTransactions(transactions);
+    } catch (error) {
+        console.error("❌ Error fetching transactions:", error);
+        alert("Error fetching transactions. Check console for details.");
+    }
+});
+
+// Function to display transactions in a passbook format
 function displayTransactions(transactions) {
     const transactionSection = document.getElementById("transactionSection");
     transactionSection.classList.remove("hidden");
@@ -24,9 +77,22 @@ function displayTransactions(transactions) {
     });
 }
 
-// Function to format date to DD-MM-YYYY
+// 🔥 Function to Format Date Properly (Fixing "YYYY-MM-DD" Format Issue)
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    if (isNaN(date)) return dateString; // If invalid, return as is
-    return date.toLocaleDateString('en-GB'); // Formats to DD/MM/YYYY
+    if (!dateString) return "N/A";  // Handle missing date
+    const date = new Date(dateString); 
+
+    if (isNaN(date)) {
+        // Handle string format (e.g., "2025-03-01")
+        const parts = dateString.split("-");
+        if (parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`; // Converts to DD/MM/YYYY
+        }
+        return dateString; // Return original if parsing fails
+    }
+
+    return date.toLocaleDateString("en-GB"); // Format as DD/MM/YYYY
 }
+
+// 🖨️ Print Passbook Function
+document.getElementById("printBtn").addEventListener("click", () => window.print());
